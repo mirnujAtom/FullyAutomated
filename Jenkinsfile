@@ -30,7 +30,7 @@ pipeline {
 		parallel{
 			stage ('Deploy to Staging'){
 				steps {
-					sh "scp -i /Users/acherkas/.ssh/oregon_my.pem **/target/*.war ec2-user@{params.tomcat_dev}:/var/lib/tomcat7/webapps"
+					sh "scp -i /Users/acherkas/.ssh/oregon_my.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
 				}
 			}
 			stage ("Deploy to Production"){
