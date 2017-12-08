@@ -1,9 +1,15 @@
-
-
 pipeline {
-	/* A declarative Pipeline */
-	agent any 		
-	
+	agent any
+
+	parameters {
+		string{name: 'tomcat_dev', defaultValue: 'ec2-52-25-197-82.us-west-2.compute.amazonaws.com', description: 'dev instance'}
+		string{name: 'tomcat_prod', defaultValue: 'ec2-52-33-21-152.us-west-2.compute.amazonaws.com', description: 'prod instance'}
+	}
+
+	triggers {
+		pollCSM('* * * * *')
+	}
+
 	stages {
 		stage('Build'){
 			steps {
@@ -17,26 +23,21 @@ pipeline {
 				}
 			}
 		}
-		stage('Deploy to stage'){
-			steps{
-				build job: 'deploy-to-staging'
-			}
-		}
-		stage('Deploy to Prod'){
-			steps{
-				timeout(time:5, unit:'DAYS'){
-					input message:'Approve PROD deployment?'
+	}
+
+	stage ('Deplouyments')
+	{
+		parallel{
+			stage ('Deploy to Staging'){
+				steps {
+					sh "scp -i /Users/acherkas/.ssh/oregon_my.pem **/target/*.war ec2-user@{params.tomcat_dev}:/var/lib/tomcat7/webapps"
 				}
-			build job: 'deploy-to-prod'
 			}
-		post{
-			success {
-				echo 'Succesfully deployed to PROD'
-			}
-			failure {
-				echo ' Failed ('
-			}
-		}
+			stage ("Deploy to Production"){
+                steps {
+                    sh "scp -i /Users/acherkas/.ssh/oregon_my.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                }
+            }
 		}
 	}
 }
