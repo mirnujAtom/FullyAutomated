@@ -2,8 +2,8 @@ pipeline {
 	agent any
 
 	parameters {
-		string{name: 'tomcat_dev', defaultValue: 'ec2-52-25-197-82.us-west-2.compute.amazonaws.com', description: 'dev instance'}
-		string{name: 'tomcat_prod', defaultValue: 'ec2-52-33-21-152.us-west-2.compute.amazonaws.com', description: 'prod instance'}
+		string(name: 'tomcat_dev', defaultValue: 'ec2-52-25-197-82.us-west-2.compute.amazonaws.com', description: 'dev instance')
+		string(name: 'tomcat_prod', defaultValue: 'ec2-52-33-21-152.us-west-2.compute.amazonaws.com', description: 'prod instance')
 	}
 
 	triggers {
